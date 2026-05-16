@@ -42,7 +42,7 @@ Chaque dossier doit contenir :
 ```text
 Rakoto_2456/
 │
-├── Plan_Soutenance.pdf
+├── livre_soutenance.docx
 ├── Projet/
 │   ├── source_code/
 │   ├── documentation/
