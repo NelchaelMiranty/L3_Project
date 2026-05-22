@@ -80,6 +80,7 @@ git clone URL_DU_REPOSITORY
 ## 2️⃣ Créer votre dossier
 
 ```bash
+cd L3_Project
 mkdir Nom_Matricule
 ```
 
