@@ -1,0 +1,19 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PRELOAD_MODEL: "true"
+    image: vox-synth:latest
+    ports:
+      - "8000:8000"
+    environment:
+      DEBUG: "false"
+      SECRET_KEY: "changez-moi-en-production"
+      ALLOWED_HOSTS: "localhost,127.0.0.1,0.0.0.0"
+      PORT: "8000"
+      GUNICORN_WORKERS: "1"
+      GUNICORN_TIMEOUT: "300"
+      # HF_TOKEN: "hf_..."  # optionnel — limites de téléchargement plus hautes
+    restart: unless-stopped

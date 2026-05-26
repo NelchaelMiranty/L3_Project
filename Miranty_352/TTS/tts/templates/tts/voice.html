@@ -1,0 +1,48 @@
+{% extends "tts/base.html" %}
+{% load static %}
+
+{% block title %}Ma voix — VOX-SYNTH{% endblock %}
+{% block header_title %}Ma voix{% endblock %}
+
+{% block main %}
+<main class="min-h-screen overflow-y-auto px-6 pb-28 pt-24 md:pl-[312px]">
+  <div class="mx-auto max-w-2xl">
+    <div class="mb-10">
+      <h2 class="font-headline-md text-headline-md text-on-surface mb-2">Cloner votre voix</h2>
+      <p class="text-body-md text-on-surface-variant">
+        Enregistrez environ 30 secondes de votre voix. Après entraînement, le TTS lira les textes avec votre timbre.
+      </p>
+    </div>
+
+    <section class="glass-card rounded-3xl p-8">
+      <div class="mb-8 flex flex-col items-center rounded-2xl border border-dashed border-outline-variant/40 bg-surface-container-lowest/50 py-16 text-center">
+        <span class="material-symbols-outlined mb-4 text-5xl text-secondary">mic</span>
+        <p class="mb-2 font-bold text-on-surface">Enregistrement vocal</p>
+        <p class="mb-6 text-label-sm text-on-surface-variant">Parlez clairement, sans bruit de fond</p>
+        <button type="button" id="record-btn" class="flex items-center gap-2 rounded-full bg-gradient-to-r from-secondary-container to-tertiary-container px-8 py-4 font-bold text-on-secondary-container shadow-lg transition-all hover:scale-105 active:scale-95">
+          <span class="material-symbols-outlined">fiber_manual_record</span>
+          <span id="record-label">Démarrer (30 s max)</span>
+        </button>
+        <p id="record-timer" class="mt-4 font-mono text-label-sm text-secondary hidden">00:00</p>
+        <audio id="record-preview" class="mt-6 hidden w-full" controls></audio>
+      </div>
+
+      <div class="rounded-2xl border border-outline-variant/20 bg-surface-container/50 p-4">
+        <p class="flex items-start gap-2 text-label-sm text-on-surface-variant">
+          <span class="material-symbols-outlined text-primary text-[18px]">info</span>
+          L'entraînement personnalisé (RVC / So-VITS-SVC) sera branché ici. Pour l'instant, utilisez la
+          <a href="{% url 'editor' %}" class="text-secondary hover:underline">synthèse</a> avec la voix par défaut.
+        </p>
+      </div>
+
+      <button type="button" disabled class="mt-6 w-full cursor-not-allowed rounded-2xl bg-surface-variant/30 py-4 font-bold text-outline opacity-60">
+        Entraîner ma voix — bientôt disponible
+      </button>
+    </section>
+  </div>
+</main>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'tts/js/voice.js' %}"></script>
+{% endblock %}

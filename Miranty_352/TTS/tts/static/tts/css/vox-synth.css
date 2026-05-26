@@ -1,0 +1,64 @@
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+}
+
+.glass-card {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(30, 41, 59, 0.5);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.canvas-focus:focus-within {
+  box-shadow: 0 0 40px -10px rgba(128, 131, 255, 0.3);
+  border-color: rgba(128, 131, 255, 0.4);
+}
+
+.waveform-bar {
+  transition: height 0.2s ease, opacity 0.2s ease;
+}
+
+.custom-cursor {
+  caret-color: #89ceff;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #2d3449;
+  border-radius: 10px;
+}
+
+#status.error {
+  color: #ffb4ab;
+}
+
+.player-panel {
+  min-height: 360px;
+}
+
+@media (min-width: 1024px) {
+  .player-panel {
+    position: sticky;
+    top: 6rem;
+    align-self: flex-start;
+    height: calc(100vh - 8rem);
+    max-height: 560px;
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}

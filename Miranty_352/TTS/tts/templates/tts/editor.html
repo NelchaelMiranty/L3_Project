@@ -1,0 +1,133 @@
+{% extends "tts/base.html" %}
+{% load static %}
+
+{% block title %}Synthèse — VOX-SYNTH{% endblock %}
+{% block header_title %}Nouvelle synthèse{% endblock %}
+
+{% block main %}
+<main class="h-screen overflow-y-auto px-6 pb-8 pt-24 md:pl-[312px] md:pr-8">
+  <div class="mx-auto flex h-[calc(100vh-7rem)] max-w-6xl flex-col gap-6 lg:flex-row">
+    <!-- Zone texte (gauche) -->
+    <div class="flex min-h-0 min-w-0 flex-1 flex-col">
+      <div class="mb-6 flex items-center justify-between">
+        <div>
+          <h2 class="font-headline-md text-headline-md text-on-surface">Nouvelle synthèse</h2>
+          <p class="text-body-md text-on-surface-variant">Synthèse vocale malgache haute fidélité</p>
+        </div>
+        <span class="rounded-full border border-outline-variant/30 bg-surface-container-high px-3 py-1 text-label-sm text-secondary">VITS</span>
+      </div>
+
+      <form id="tts-form" class="canvas-focus group relative min-h-[280px] flex-1 overflow-hidden rounded-3xl border border-outline-variant/20 bg-surface-container-lowest/50 transition-all duration-500 lg:min-h-0" novalidate>
+        {% csrf_token %}
+        <textarea
+          id="text"
+          name="text"
+          class="custom-cursor h-full min-h-[240px] w-full resize-none border-none bg-transparent p-8 text-body-lg text-on-surface placeholder:text-outline-variant focus:ring-0 lg:min-h-0 lg:p-10"
+          placeholder="Ampidiro eto ny lahatsoratra malagasy…"
+          required
+        ></textarea>
+        <div class="absolute bottom-6 right-6 flex items-center gap-4">
+          <span id="char-count" class="text-label-sm text-outline-variant">0 caractères</span>
+          <button
+            type="submit"
+            id="generate-btn"
+            class="flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-bold text-on-primary shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95 disabled:opacity-60"
+          >
+            <span class="material-symbols-outlined">auto_awesome</span>
+            Générer
+          </button>
+        </div>
+      </form>
+
+      <div class="mt-4 flex flex-wrap gap-2" id="examples">
+        {% for example in examples %}
+        <button type="button" class="example-chip rounded-full border border-outline-variant/30 bg-surface-container px-3 py-1 text-label-sm text-on-surface-variant transition-all hover:border-primary hover:text-primary" data-example="{{ example }}">
+          {{ example|truncatechars:42 }}
+        </button>
+        {% endfor %}
+      </div>
+
+      <p id="status" class="mt-4 min-h-[1.25rem] text-label-sm text-on-surface-variant" role="status" aria-live="polite"></p>
+
+      <section class="mt-4 rounded-2xl border border-outline-variant/20 bg-surface-container-low/50 p-5">
+        <h3 class="mb-4 font-label-sm text-label-sm font-bold uppercase tracking-wider text-primary">Fametrahana</h3>
+        <div class="grid gap-5 sm:grid-cols-3">
+          <label class="flex flex-col gap-2">
+            <span class="flex justify-between text-label-sm text-on-surface">
+              <span>Ritma</span>
+              <span id="ritma-val" class="font-mono text-secondary">{{ default_ritma }}</span>
+            </span>
+            <input type="range" id="ritma" min="0.5" max="1.5" step="0.05" value="{{ default_ritma }}" class="w-full accent-secondary">
+          </label>
+          <label class="flex flex-col gap-2">
+            <span class="flex justify-between text-label-sm text-on-surface">
+              <span>Fiovan'ny ritma</span>
+              <span id="fiovan-ritma-val" class="font-mono text-secondary">{{ default_fiovan_ritma }}</span>
+            </span>
+            <input type="range" id="fiovan-ritma" min="0" max="1" step="0.05" value="{{ default_fiovan_ritma }}" class="w-full accent-secondary">
+          </label>
+          <label class="flex flex-col gap-2">
+            <span class="flex justify-between text-label-sm text-on-surface">
+              <span>Angola</span>
+              <span id="angola-val" class="font-mono text-secondary">{{ default_angolo }}</span>
+            </span>
+            <input type="range" id="angola" min="0" max="1" step="0.05" value="{{ default_angolo }}" class="w-full accent-secondary">
+          </label>
+        </div>
+      </section>
+
+      <details class="mt-4 rounded-2xl border border-outline-variant/20 bg-surface-container-low/50 p-4">
+        <summary class="cursor-pointer font-label-sm text-label-sm text-on-surface-variant">Options avancées</summary>
+        <label class="mt-4 flex flex-col gap-2">
+          <span class="text-label-sm text-on-surface-variant">Graine (reproductibilité)</span>
+          <input type="number" id="seed" name="seed" value="{{ default_seed }}" step="1" class="rounded-xl border-outline-variant/30 bg-surface-container-lowest text-on-surface">
+        </label>
+        <p class="mt-4 text-label-sm text-on-surface-variant">
+          Voix personnalisée :
+          <a href="{% url 'voice' %}" class="font-bold text-secondary hover:underline">Ma voix</a>
+        </p>
+      </details>
+    </div>
+
+    <!-- Afficheur vocal (droite, pas dans la sidebar) -->
+    <aside class="player-panel flex w-full shrink-0 flex-col rounded-3xl border border-outline-variant/20 bg-surface-container-high/70 p-6 shadow-xl backdrop-blur-xl lg:w-[300px] xl:w-[340px]">
+      <h3 class="mb-1 font-headline-md text-headline-md text-on-surface">Résultat audio</h3>
+      <p class="mb-6 text-label-sm text-on-surface-variant">Écoutez ou téléchargez la synthèse</p>
+
+      <div class="flex flex-1 flex-col items-center justify-center gap-5">
+        <button
+          type="button"
+          id="play-btn"
+          class="flex h-14 w-14 items-center justify-center rounded-full bg-secondary text-on-secondary shadow-lg shadow-secondary/20 transition-all hover:scale-105 active:scale-95 disabled:opacity-40"
+          disabled
+          aria-label="Lecture"
+        >
+          <span class="material-symbols-outlined text-[28px]" id="play-icon" style="font-variation-settings: 'FILL' 1">play_arrow</span>
+        </button>
+
+        <div class="flex h-28 w-full items-end justify-center gap-0.5 overflow-hidden px-2" id="waveform-container"></div>
+
+        <p class="tabular-nums text-label-sm text-on-surface-variant" id="time-display">00:00 / 00:00</p>
+
+        <a
+          id="download"
+          href="#"
+          class="flex items-center gap-2 rounded-full border border-outline-variant/30 px-4 py-2 text-label-sm font-bold text-secondary transition-all hover:border-secondary hover:bg-secondary/10 pointer-events-none opacity-40"
+          download="synthesis.wav"
+        >
+          <span class="material-symbols-outlined text-[18px]">download</span>
+          Télécharger
+        </a>
+      </div>
+
+      <audio id="player" class="hidden"></audio>
+    </aside>
+  </div>
+</main>
+{% endblock %}
+
+{% block footer %}{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'tts/js/editor.js' %}"></script>
+{% endblock %}

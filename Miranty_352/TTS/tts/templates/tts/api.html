@@ -1,0 +1,76 @@
+{% extends "tts/base.html" %}
+
+{% block title %}API — VOX-SYNTH{% endblock %}
+{% block header_title %}API{% endblock %}
+
+{% block main %}
+<main class="min-h-screen overflow-y-auto bg-surface-dim px-6 pb-28 pt-24 md:pl-[312px]">
+  <div class="mx-auto max-w-max-content-width">
+    <div class="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+      <div>
+        <h1 class="font-display-lg text-display-lg text-on-surface mb-2">Gestion API</h1>
+        <p class="max-w-2xl font-body-lg text-body-lg text-on-surface-variant">
+          Intégrez la synthèse vocale malgache dans vos applications via l'endpoint REST local.
+        </p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-12">
+      <section class="glass-card lg:col-span-12 rounded-2xl p-8">
+        <div class="mb-6 flex items-center justify-between">
+          <div>
+            <h2 class="font-headline-md text-headline-md text-on-surface">Endpoint de synthèse</h2>
+            <p class="font-label-sm text-label-sm text-on-surface-variant">POST · retourne un fichier WAV</p>
+          </div>
+          <span class="rounded-full bg-green-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-green-400">Actif</span>
+        </div>
+        <code class="block rounded-xl bg-surface-container-lowest px-4 py-3 font-mono text-sm text-primary">{{ synthesize_url }}</code>
+        <pre class="mt-6 overflow-x-auto rounded-xl bg-surface-container-lowest p-4 text-sm text-on-surface-variant"><code>curl -X POST {{ synthesize_url }} \
+  -H "Content-Type: application/json" \
+  -H "X-CSRFToken: &lt;csrf_token&gt;" \
+  -d '{"text": "Manao ahoana!", "seed": 555, "ritma": 0.75, "fiovan_ritma": 0.40, "angola": 0.40}' \
+  --output synthesis.wav</code></pre>
+      </section>
+
+      <section class="glass-card lg:col-span-6 rounded-2xl p-8">
+        <h2 class="font-headline-md text-headline-md text-on-surface mb-4">Paramètres JSON</h2>
+        <ul class="space-y-3 text-body-md text-on-surface-variant">
+          <li><strong class="text-on-surface">text</strong> — texte malgache (requis)</li>
+          <li><strong class="text-on-surface">seed</strong> — graine, défaut {{ default_seed }}</li>
+          <li><strong class="text-on-surface">ritma</strong> — vitesse (0.5–1.5), défaut {{ default_ritma }}</li>
+          <li><strong class="text-on-surface">fiovan_ritma</strong> — variation du ritma (0–1), défaut {{ default_fiovan_ritma }}</li>
+          <li><strong class="text-on-surface">angola</strong> — expressivité (0–1), défaut {{ default_angolo }}</li>
+          <li class="text-label-sm opacity-80">Alias API : <code>speaking_rate</code>, <code>noise_scale_duration</code>, <code>noise_scale</code></li>
+        </ul>
+      </section>
+
+      <section class="glass-card lg:col-span-6 rounded-2xl p-8">
+        <h2 class="font-headline-md text-headline-md text-on-surface mb-4">Modèle</h2>
+        <p class="text-body-md text-on-surface-variant mb-2">
+          <a href="https://huggingface.co/{{ model_id }}" class="text-primary hover:underline" target="_blank" rel="noopener">{{ model_id }}</a>
+        </p>
+        <p class="text-label-sm text-on-surface-variant">Architecture : VitsModel + AutoTokenizer</p>
+        <p class="text-label-sm text-on-surface-variant">Fréquence : 16 000 Hz · Pauses à la ponctuation</p>
+      </section>
+
+      <section class="glass-card lg:col-span-12 rounded-2xl p-8">
+        <h2 class="font-headline-md text-headline-md text-on-surface mb-4">En-têtes de réponse</h2>
+        <div class="divide-y divide-outline-variant/10">
+          <div class="flex justify-between py-3 text-body-md">
+            <span class="text-on-surface-variant">X-Sample-Rate</span>
+            <span class="font-mono text-primary">16000</span>
+          </div>
+          <div class="flex justify-between py-3 text-body-md">
+            <span class="text-on-surface-variant">X-Audio-Duration</span>
+            <span class="font-mono text-primary">durée en secondes</span>
+          </div>
+          <div class="flex justify-between py-3 text-body-md">
+            <span class="text-on-surface-variant">Content-Type</span>
+            <span class="font-mono text-primary">audio/wav</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+{% endblock %}
