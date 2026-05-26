@@ -1,6 +1,6 @@
 # VOX-SYNTH — TTS Malagasy (Django)
 
-Interface web pour le modèle [Nelchael/tts-malagasy](https://huggingface.co/Nelchael/tts-malagasy) (`VitsModel` + `AutoTokenizer`).
+Interface web pour Tester directement [Synthèse vocale Malgache TTS](https://tts-mg.onrender.com/)
 
 ## Installation locale
 
